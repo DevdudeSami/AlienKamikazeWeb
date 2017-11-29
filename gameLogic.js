@@ -41,7 +41,7 @@ function initialiseGame() {
   window.addEventListener('keyup', keyReleased);
 
   // Start game loop
-  window.setInterval(gameLoop, 5);
+  window.setInterval(gameLoop, 15);
 }
 
 function gameLoop() {
