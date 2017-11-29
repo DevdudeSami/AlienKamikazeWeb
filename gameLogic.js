@@ -9,7 +9,7 @@ var moving = "none"; // none || left || right
 var enemies = []; // array of enemy objects {enemyObj: enemyObj, speed: speed} ships on screen
 
 var enemyTimer = 0;
-const enemyTimerMax = 100;
+const enemyTimerMax = 25;
 
 const minEnemySpeed = 1;
 const maxEnemySpeed = 5;
@@ -62,13 +62,14 @@ function gameLoop() {
 
       // check collision
       if(detectCollision(player, enemySprite)) {
-        score += 1;
-        updateScoreView();
+        endGame();
       }
 
       // check enemy reached end
       if(getPosition(enemySprite).y+0.5*enemySprite.height() > gameHeight) {
-        endGame();
+        score += 1;
+        enemySprite.remove();
+        updateScoreView();
       }
     });
 
@@ -87,7 +88,11 @@ function endGame() {
 function restartGame() {
   hideInfo();
   score = 0;
+  updateScoreView();
   state = "playing";
+
+  $(".enemy").remove();
+  enemies.removeAll();
 }
 
 function updateScoreView() {

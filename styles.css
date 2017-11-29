@@ -13,10 +13,18 @@ body {
 
 #player {
   position: absolute;
+
+  width: 64px;
+  height: 64px;
 }
 
 .enemy {
   position: absolute;
+
+  transform: scaleY(-1);
+
+  width: 64px;
+  height: 64px;
 }
 
 #info {
@@ -27,6 +35,8 @@ body {
   border: 1px black solid;
 
   text-align: center;
+
+  z-index: 1000;
 }
 
 #scoreIndicator {
