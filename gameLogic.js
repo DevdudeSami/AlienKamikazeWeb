@@ -9,10 +9,10 @@ var moving = "none"; // none || left || right
 var enemies = []; // array of enemy objects {enemyObj: enemyObj, speed: speed} ships on screen
 
 var enemyTimer = 0;
-const enemyTimerMax = 200;
+const enemyTimerMax = 100;
 
-const minEnemySpeed = 3;
-const maxEnemySpeed = 7;
+const minEnemySpeed = 1;
+const maxEnemySpeed = 5;
 
 const enemyNames = ["Alien Ship.png", "Blue Alien.png", "Purple Ship.png", "Red Alien.png", "Thick Alien Ship.png", "Thin Alien Ship.png"];
 const gameWidth = 600;
