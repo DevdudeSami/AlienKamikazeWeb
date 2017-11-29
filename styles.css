@@ -4,18 +4,18 @@ body {
 
 #game {
   border: 1px black solid;
-  background-image: url("assets/boyd_orr.png");
+  background-image: url("assets/Background.png");
   position: relative;
   top: 0px;
   left: 0px;
   margin: 0 auto;
 }
 
-#peter {
+#player {
   position: absolute;
 }
 
-#block {
+.enemy {
   position: absolute;
 }
 

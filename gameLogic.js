@@ -1,38 +1,37 @@
 var gameScreen;
-var peter;
-var block;
+var player;
 var info;
 
-var blockOnScreen = false;
 var state = "playing";  // playing || gameOver
 var score = 0;
 var moving = "none"; // none || left || right
 
-var petePos = { x: 0, y: 0 };
-var blockPos = { x: 0, y: 0 };
+var enemies = []; // array of enemy objects {enemyObj: enemyObj, speed: speed} ships on screen
 
-const blockNames = ["Algs.png", "AP.png", "DF.png", "IS.png", "PSD.png"];
-const gameWidth = 800;
-const gameHeight = 600;
+var enemyTimer = 0;
+const enemyTimerMax = 200;
+
+const minEnemySpeed = 3;
+const maxEnemySpeed = 7;
+
+const enemyNames = ["Alien Ship.png", "Blue Alien.png", "Purple Ship.png", "Red Alien.png", "Thick Alien Ship.png", "Thin Alien Ship.png"];
+const gameWidth = 600;
+const gameHeight = 700;
 
 const speed = 6;
-var blockSpeed = 3;
 
 /// Set initial variables and conditions
 function initialiseGame() {
   // variables
-  peter = $("#peter");
+  player = $("#player");
   gameScreen = $("#game");
-  block = $("#block");
   info = $("#info");
 
   // initialise game screen dimensions
   gameScreen.css({ 'width': gameWidth + 'px', 'height': gameHeight + 'px' });
 
-  console.log(getPosition(gameScreen));
-
-  // set initial position for peter
-  setPosition(peter, 0.5*(gameWidth-peter.width()), gameHeight-peter.height());
+  // set initial position for player
+  setPosition(player, 0.5*(gameWidth-player.width()), gameHeight-player.height());
 
   // set position for info box
   hideInfo();
@@ -46,35 +45,36 @@ function initialiseGame() {
 }
 
 function gameLoop() {
-
   if(state == "playing") {
-    if(!blockOnScreen) {
-      createNewBlock();
-      blockOnScreen = true;
+    // check if should create enemy
+    if(enemyTimer > enemyTimerMax) {
+      enemyTimer = 0;
+      createNewEnemy();
     } else {
-      // move the block
-      setPosition(block, getPosition(block).x, getPosition(block).y+blockSpeed);
+      enemyTimer += 1;
+    }
 
-      // move peter
-      if(moving == "left") { moveLeft(); }
-      else if(moving == "right") { moveRight(); }
+    // move enemies and check collisions
+    enemies.forEach(function(enemy){
+      var enemySprite = enemy.enemyObj;
+
+      setPosition(enemySprite, getPosition(enemySprite).x, getPosition(enemySprite).y+enemy.speed);
 
       // check collision
-      if(detectCollision(peter, block)) {
+      if(detectCollision(player, enemySprite)) {
         score += 1;
         updateScoreView();
-        blockOnScreen = false;
-
-        if(score % 2 == 0) {
-          blockSpeed += 0.1;
-        }
       }
 
-      // check block reached end
-      if(getPosition(block).y+0.5*block.height() > gameHeight) {
+      // check enemy reached end
+      if(getPosition(enemySprite).y+0.5*enemySprite.height() > gameHeight) {
         endGame();
       }
-    }
+    });
+
+    // move player
+    if(moving == "left") { moveLeft(); }
+    else if(moving == "right") { moveRight(); }
   }
 }
 
@@ -82,13 +82,11 @@ function endGame() {
   state = "gameOver";
   showInfo()
   updateScoreView();
-  createNewBlock();
 }
 
 function restartGame() {
   hideInfo();
   score = 0;
-  blockSpeed = 3;
   state = "playing";
 }
 
@@ -104,11 +102,18 @@ function hideInfo() {
   setPosition(info, -1000, -1000);
 }
 
-function createNewBlock() {
-  var blockName = blockNames[getRandomInt(0,5)];
+function createNewEnemy() {
+  var enemyName = enemyNames[getRandomInt(0,enemyNames.length)];
 
-  block.prop('src', "assets/"+blockName);
-  setPosition(block, getRandomInt(0,gameWidth-block.width()), -1.5*block.height());
+  var enemy = $("<img class='enemy'>");
+  enemy.prop('src', "assets/"+enemyName);
+
+  var speed = getRandomInt(minEnemySpeed, maxEnemySpeed+1);
+
+  gameScreen.append(enemy);
+  enemies.push({enemyObj: enemy, speed: speed});
+
+  setPosition(enemy, getRandomInt(0,gameWidth-enemy.width()), -1.5*enemy.height());
 }
 
 function keyPressed(event) {
@@ -131,20 +136,20 @@ function keyReleased(event) {
 }
 
 function moveLeft() {
-  setPosition(peter, getPosition(peter).x-speed, getPosition(peter).y);
-  if(getPosition(peter).x < 0) {
-    setPosition(peter, 0, getPosition(peter).y);
+  setPosition(player, getPosition(player).x-speed, getPosition(player).y);
+  if(getPosition(player).x < 0) {
+    setPosition(player, 0, getPosition(player).y);
   }
 }
 
 function moveRight() {
-  setPosition(peter, getPosition(peter).x+speed, getPosition(peter).y);
-  if(getPosition(peter).x > gameWidth-peter.width()) {
-    setPosition(peter, gameWidth-peter.width(), getPosition(peter).y);
+  setPosition(player, getPosition(player).x+speed, getPosition(player).y);
+  if(getPosition(player).x > gameWidth-player.width()) {
+    setPosition(player, gameWidth-player.width(), getPosition(player).y);
   }
 }
 
-function detectCollision(a, b) { // a is Peter, b is block
+function detectCollision(a, b) { // a is player, b is enemy
     var aPos = getPosition(a);
     var bPos = getPosition(b);
 
@@ -173,6 +178,8 @@ function setPosition(jObj, x, y) {
 }
 
 function getPosition(jObj) {
+  console.log(jObj);
+
   var left = jObj.position().left;
   var top = jObj.position().top;
 
