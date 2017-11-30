@@ -158,15 +158,15 @@ function detectCollision(a, b) { // a is player, b is enemy
     var aPos = getPosition(a);
     var bPos = getPosition(b);
 
-    var x1 = aPos.x;
-    var y1 = aPos.y;
-    var w1 = a.width();
-    var h1 = a.height();
+    var x1 = aPos.x+0.25*a.width();
+    var y1 = aPos.y+0.25*a.height();
+    var w1 = 0.5*a.width();
+    var h1 = 0.5*a.height();
 
-    var x2 = bPos.x;
-    var y2 = bPos.y;
-    var w2 = b.width();
-    var h2 = b.height();
+    var x2 = bPos.x+0.25*b.width();
+    var y2 = bPos.y+0.25*b.height();
+    var w2 = 0.5*b.width();
+    var h2 = 0.5*b.height();
 
     return (
       (y1 < y2 + h2) && // y condition
@@ -183,8 +183,6 @@ function setPosition(jObj, x, y) {
 }
 
 function getPosition(jObj) {
-  console.log(jObj);
-
   var left = jObj.position().left;
   var top = jObj.position().top;
 
